@@ -1,93 +1,78 @@
-# FP4-proposal
+# Data Visualizations from UCI Machine Learning Repository
 
-**do not fork this** there are different directions
+### Statement
+We plan to make a few data visualizations from the UCI Machine Learning Repository. Data visualization is interesting
+because it enables us to understand and communicate complex data easily. By performing data visualizations in racket, we
+hope to utilize several key concepts learned in class and explore racket plot, csv, array and matrix 
+libraries.
 
-## tl;dr
+### Analysis
 
-1. Create a repository in [our organization][oplorg] for your project; add your teammate(s) as collaborators
-2. Copy-paste this [template file](template.md) as the `README.md` file in your new repo; edit to become project plan
-3. Make 3-slide slide show to be presented in class; insert into [class desk][gslides]
-4. Enter project details into a new [Google form][projform]
-5. Make a 0.1 release of your project (tagging `@fgmart`)
+In order to implement the project we plant to use several approaches from the class.
 
-## Due Date
-* Sun Apr 2, 2017 at 11p
+We will be using data abstraction by taking a data set from a CSV and storing it in a list of lists and 2d arrays, like
+a table.
 
-## Instructions
+We will be using recursion throughout the project since several different list operations involve recursing through the 
+list by using car and cdr. For example, since CSV stores everything in a string format, to perform operations on the 
+numbers in a data set, they must first casted to numbers and the non-number fields need to be removed.
 
-Teams will submit a single proposal, with sections that each member has done individually detailing their proposed contributions. The submission will be the `README.md` file in your brand-new project repository, which you'll make. 
+We will also be using mapping, filtering, and reductions to perform various data manipulations on, such as removing a 
+certain column from our data. Also, we will be using higher order functions to perform operations on several elements 
+in a 2d list or array.
 
-You must start using GitHub collaboratively from this point forward. 
+The array library in racket supports a lot of list manipulation we did in Haskell like slicing and comprehensions. 
+The matrix library will enable us to perform standard linear algebra functions.
 
-Instructions: 
+### External Technologies
 
-1. Create a new repository for your project as part of [our organization][oplorg]
-  * Give it a name that you like—it may be your real names, usernames, or project name
-  * Add your teammates as collaborators (Settings > Collaborators & Teams > Add Collaborator)
-2. Copy the content from the [template file](template.md) into your `README.md`
-  * Click the “Raw” button on the `template.md` file and then copy-paste into your repo's `README.md` edit view
-  * Save it
-  * *Then start editing it to become your actual proposal*
-3. Everyone on the team contributes their sections to your `README.md` file.
-  * Use GitHub's collaboration features to make sure that each team member contributes meaningful content to the file
-  * At the absolute minimum, respective team members must have commits that show they have authored the section describing their planned contributions
-4. Create a [github Release](https://help.github.com/articles/creating-releases/) of your repository. 
- * Version: v0.1
- * Title: Proposal
- * Description: tag `@fgmart`
+Our project will be connecting to data sets from UCI (for example https://archive.ics.uci.edu/ml/datasets/Iris) or using
+reading/writing from a CSV file.
 
-And now some detail on what to write _in_ the report.
+### Data Sets or other Source Materials
 
-**Overall guidance:** *You should be proposing something that you have high confidence that you can achieve, and the proposal should project that confidence.*
+We will be using the iris dataset from UCI (https://archive.ics.uci.edu/ml).
 
-The proposal should be no longer than necessary, but long enough to include critical detail. Diagrams are welcome. 
+### Deliverable and Demonstration
 
-Remember, you can do some neat [formatting things with Markdown.][markdown]
+At least two different data visualizations, one will be plot of a principal component analysis like the sample image 
+below.
 
-In case you missed it, here again is the [template file](template.md)
+![pca image](/pca.png?raw=true "pca image")
 
-## In-Class Presentation 
-Teams will each deliver an in-class presentation. Your team will have two minutes to present.
+The functions we plan on writing will be fairly general and should able to easily be applied to other data sets. 
+For example 
 
-The presentation shall have exactly three slides:
+### Evaluation of Results
+We will know we are successful because we will produce the same plots made in FP3, The Iris data set is very good for 
+testing out visualization techniques since the data set is well documented and very intuitive to understand. 
 
-1. Title
-  * project title (10 words or fewer)
-  * your real names
-  * each real name followed by GitHub username
-  * a relevant image of some sort (optional)
-2. Overview
-  * a few short phrases describing the project
-  * a different relevant image (optional)
-3. Architecture Diagram 
-  * visual diagram showing the major components of the project
-  * include external things that your project will connect to
-  * include arrows showing flow of information
-  * internal components annotated with Racket libraries that they will use
-  * _important:_ annotate each block with the GH username of the person who is primarily responsible for its creation
+## Architecture Diagram
+Upload the architecture diagram you made for your slide presentation to your repository, and include it in-line here.
 
-Make the slides in [Google Slides][gslides].
+![OPL_FP_image](/OPL_FP.png?raw=true "OPLFP image")
 
-Then, import your deck into the [slide deck][martinslides]. You have write privileges based on your membership in the class forum.
+Data will be obtained from the UCI Machine Learning Repository in CSV format. We can then use the Racket CSV library to
+move it into memory as a list of lists of strings. From there we can process the data using Racket until it is ready to
+plot using the plot library.
 
-You and your teammates will give the presentation in class the day that this assignment is due.
-
-## Fill out Project Information Form
-
-Enter project details into a new [Google form][projform].
-
-**This is absolutely necessary so I can keep track of all of the projects.**
-
-## Grading
-The proposal must be submitted on time to receive credit. Late submissions will not be accepted for credit.
-
-You personally must be present in class (and participate in the presentation when it is your turn) to receive credit for the presentation. If your teammates are there and you are not, they will receive presentation credit and you will not.
+## Schedule
 
 
-<!-- Links -->
-[forum]: https://groups.google.com/forum/#!forum/uml-opl-spr17
-[markdown]: https://help.github.com/articles/markdown-basics/
-[gslides]:https://slides.google.com
-[martinslides]:https://docs.google.com/presentation/d/1fzNX4nV4z6IkLiVBMB0YD4CctlJxR9pWXSbYTOFcQvc
-[projform]:https://goo.gl/forms/Gfh9hWBgvg323j6M2
-[oplorg]:https://github.com/oplS17projects/
+### First Milestone (Sun Apr 9)
+
+Writing code required to do initial manipulations from the raw csv data to a usable data abstraction.
+
+### Second Milestone (Sun Apr 16)
+completing the plots
+
+### Public Presentation (Mon Apr 24, Wed Apr 26, or Fri Apr 28 [your date to be determined later])
+additional data visualizations time permitting 
+
+## Group Responsibilities
+
+### Robert Farinelli @rfarinel
+data visualization of data set on UCI repository 
+
+### Christopher Pearce @cp0153
+Principal Component Analysis of Iris or other similar data set on the UCI repository 
