@@ -72,7 +72,7 @@ additional data visualizations time permitting
 ## Group Responsibilities
 
 ### Robert Farinelli @rfarinel
-data visualization of data set on UCI repository 
+data visualization of data from UCI repository 
 
 ### Christopher Pearce @cp0153
 Principal Component Analysis of Iris or other similar data set on the UCI repository 
