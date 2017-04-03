@@ -41,7 +41,7 @@ below.
 ![pca image](/pca.png?raw=true "pca image")
 
 The functions we plan on writing will be fairly general and should able to easily be applied to other data sets. 
-For example 
+For example the code casting numbers in a 2 dimensional list can be appled to any list of lists. 
 
 ### Evaluation of Results
 We will know we are successful because we will produce the same plots made in FP3, The Iris data set is very good for 
