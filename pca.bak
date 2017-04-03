@@ -40,34 +40,3 @@
 ; quick test of 3d plot
 ;(plot3d (points3d (array->list* iris-array))
 ;          #:altitude 25)
-
-;;Data abstractions
-(define (sepal-length x) (car x))
-(define (sepal-width x) (car (cdr x)))
-(define (petal-length x) (car (cdr (cdr x))))
-(define (petal-width x) (car (cdr (cdr (cdr x)))))
-(define (class x) (car (cdr (cdr (cdr (cdr x))))))
-
-;;Data manipluation functions
-
-;; (average? param data class) → number?
-;; data: list
-;; param: procedure (should be one of the data abstractions
-;; class: srting
-
-;;ueasge:
-;;> (total (remove-last iris-raw) petal-width
-;;> (total (remove-last iris-raw) petal-width "Iris-virginica")
-
-(define total 
-  ;;create a lamda to have an optional arugement
-  (lambda (data parm [class-t "none"])
-    (if (string=? class-t "none")
-        (foldr (lambda (x y) (+ (string->number (parm x)) y)) 0 data)
-        (foldr (lambda (x y) (+ (string->number (parm x)) y)) 0
-               (foldr (lambda (x y) (if (string=? (class x) class-t) (cons x y) y)) '() data)))))
-
-    
-
-
-
