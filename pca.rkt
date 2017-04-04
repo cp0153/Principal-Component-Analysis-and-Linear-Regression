@@ -48,9 +48,13 @@
 (define (petal-width x) (car (cdr (cdr (cdr x)))))
 (define (class x) (car (cdr (cdr (cdr (cdr x))))))
 
+;;data helper functions
+(define (same-class class1 class2)
+  (string=? class1 class2))
+
 ;;Data manipluation functions
 
-;; (average? param data class) → number?
+;; (total param data class) → number?
 ;; data: list
 ;; param: procedure (should be one of the data abstractions
 ;; class: srting
@@ -60,13 +64,33 @@
 ;;> (total (remove-last iris-raw) petal-width "Iris-virginica")
 
 (define total 
-  ;;create a lamda to have an optional arugement
+  ;;create a lambda to have an optional arugement
   (lambda (data parm [class-t "none"])
-    (if (string=? class-t "none")
+    (if (same-class class-t "none")
         (foldr (lambda (x y) (+ (string->number (parm x)) y)) 0 data)
+        ;;filter then get the average
         (foldr (lambda (x y) (+ (string->number (parm x)) y)) 0
-               (foldr (lambda (x y) (if (string=? (class x) class-t) (cons x y) y)) '() data)))))
+               (foldr (lambda (x y) (if (same-class (class x) class-t) (cons x y) y)) '() data)))))
 
+;; (average param data class) → number?
+;; data: list
+;; param: procedure (should be one of the data abstractions
+;; class: srting
+
+;;ueasge:
+;;> (average (remove-last iris-raw) petal-width
+;;> (average (remove-last iris-raw) petal-width "Iris-virginica")
+
+(define average 
+  ;;create a lambda to have an optional arugement
+  (lambda (data parm [class-t "none"])
+    (if (same-class class-t "none")
+        (/ (foldr (lambda (x y) (+ (string->number (parm x)) y)) 0 data)(foldr (lambda (x y)(+ 1 y)) 0  data))
+        (/ (foldr (lambda (x y) (+ (string->number (parm x)) y)) 0
+               (foldr (lambda (x y) (if (same-class (class x) class-t) (cons x y) y)) '() data))
+           (foldr (lambda (x y) (if (same-class (class x) class-t)
+                                (+ 1 y)
+                                y)) 0  data)))))
     
 
 
