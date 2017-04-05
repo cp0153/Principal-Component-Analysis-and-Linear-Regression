@@ -52,6 +52,18 @@
 (define (same-class class1 class2)
   (string=? class1 class2))
 
+;;lambdas for filter
+(define less-than 
+  (lambda (y)
+    (lambda (x)
+      (< x y))))
+
+(define greater-than
+  (lambda (y)
+    (lambda (x)
+      (> x y))))
+      
+
 ;;Data manipluation functions
 
 ;; (total param data class) → number?
@@ -117,7 +129,43 @@
     (sqrt (/ (foldr (lambda (x y) (+ (expt (- (string->number (parm x)) (average data parm class-t)) 2) y)) 0 data)
              (total data parm class-t)))))
 
+(define min
+  (lambda (data parm [class-t "none"])
+    (if (same-class class-t "none")
+        (foldr (lambda (x y) (if (< (string->number (parm x)) y) x y)) 9999999999 data)
+        ;;filter then get the average
+        (foldr (lambda (x y) (if (< (string->number (parm x)) y) x y)) 9999999999
+               (foldr (lambda (x y) (if (same-class (class x) class-t) (cons x y) y)) '() data)))))
+
+
+(define max
+  (lambda (data parm [class-t "none"])
+    (if (same-class class-t "none")
+        (foldr (lambda (x y) (if (> (string->number (parm x)) y) x y)) 0 data)
+        ;;filter then get the average
+        (foldr (lambda (x y) (if (> (string->number (parm x)) y) x y)) 0
+               (foldr (lambda (x y) (if (same-class (class x) class-t) (cons x y) y)) '() data)))))
+
+
+(define filiter 
+  (lambda (data parm expr [class-t "none"])
+    (if (same-class class-t "none")
+        (foldr (lambda (x y) (if (expr (string->number (parm x))) (cons x y) y)) '() data)
+        ;;filter then get the average
+        (foldr (lambda (x y) (if (expr (string->number (expr x))) x y)) '()
+               (foldr (lambda (x y) (if (same-class (class x) class-t) (cons x y) y)) '() data)))))
+
+;;(define where
+;;  (lambda (data parm list-of-expr [class-t "none"])
+;;    (if (null? list-of-expr)
+;;    data
+;;    (where (filter
+      
+           
     
+    
+  
+
 
 
 
