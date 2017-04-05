@@ -42,10 +42,10 @@
 ;          #:altitude 25)
 
 ;;Data abstractions
-(define (sepal-length x) (car x))
-(define (sepal-width x) (car (cdr x)))
-(define (petal-length x) (car (cdr (cdr x))))
-(define (petal-width x) (car (cdr (cdr (cdr x)))))
+(define (petal-width x) (car x))
+(define (sepal-length x) (car (cdr x)))
+(define (sepal-width x) (car (cdr (cdr x))))
+(define (petal-length x) (car (cdr (cdr (cdr x)))))
 (define (class x) (car (cdr (cdr (cdr (cdr x))))))
 
 ;;data helper functions
@@ -60,7 +60,7 @@
 ;; class: srting
 
 ;;ueasge:
-;;> (total (remove-last iris-raw) petal-width
+;;> (total (remove-last iris-raw) petal-width)
 ;;> (total (remove-last iris-raw) petal-width "Iris-virginica")
 
 (define total 
@@ -72,25 +72,51 @@
         (foldr (lambda (x y) (+ (string->number (parm x)) y)) 0
                (foldr (lambda (x y) (if (same-class (class x) class-t) (cons x y) y)) '() data)))))
 
+;; (total param data class) → number?
+;; data: list
+;; class: srting
+
+;;ueasge:
+;;> (count (remove-last iris-raw))
+;;> (count (remove-last iris-raw) "Iris-virginica")
+
+(define count
+  ;;create a lambda to have an optional arugement
+  (lambda (data [class-t "none"])
+    (if (same-class class-t "none")
+        (foldr (lambda (x y) (+ 1 y)) 0 data)
+        ;;filter then get the average
+        (foldr (lambda (x y) (+ 1 y)) 0
+               (foldr (lambda (x y) (if (same-class (class x) class-t) (cons x y) y)) '() data)))))
+
 ;; (average param data class) → number?
 ;; data: list
 ;; param: procedure (should be one of the data abstractions
 ;; class: srting
 
 ;;ueasge:
-;;> (average (remove-last iris-raw) petal-width
+;;> (average (remove-last iris-raw) petal-width)
 ;;> (average (remove-last iris-raw) petal-width "Iris-virginica")
 
 (define average 
   ;;create a lambda to have an optional arugement
   (lambda (data parm [class-t "none"])
-    (if (same-class class-t "none")
-        (/ (foldr (lambda (x y) (+ (string->number (parm x)) y)) 0 data)(foldr (lambda (x y)(+ 1 y)) 0  data))
-        (/ (foldr (lambda (x y) (+ (string->number (parm x)) y)) 0
-               (foldr (lambda (x y) (if (same-class (class x) class-t) (cons x y) y)) '() data))
-           (foldr (lambda (x y) (if (same-class (class x) class-t)
-                                (+ 1 y)
-                                y)) 0  data)))))
+        (/ (total data parm class-t) (count data class-t))))
+  
+
+;; (average param data class) → number?
+;; data: list
+;; param: procedure (should be one of the data abstractions)
+;; class: srting
+
+;;ueasge:
+;;> (standard-deviation (remove-last iris-raw) petal-width)
+;;> (standard-deviation(remove-last iris-raw) petal-width "Iris-virginica")
+(define standard-deviation
+  (lambda (data parm [class-t "none"])
+    (sqrt (/ (foldr (lambda (x y) (+ (expt (- (string->number (parm x)) (average data parm class-t)) 2) y)) 0 data)
+             (total data parm class-t)))))
+
     
 
 
