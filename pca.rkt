@@ -26,7 +26,7 @@
 ; converts a list of strings to numbers recursivly 
 (define (str-to-num-lst items)
   (if (null? items)
-      '()
+      '() 
       (cons (string->number (car items))
             (str-to-num-lst (cdr items)))))
 
@@ -62,6 +62,15 @@
   (lambda (y)
     (lambda (x)
       (> x y))))
+
+(define equal-to
+  (lambda (y)
+    (lambda (x)
+      (= x y))))
+
+(define identity
+    (lambda (x)
+      x))
       
 
 ;;Data manipluation functions
@@ -152,15 +161,46 @@
     (if (same-class class-t "none")
         (foldr (lambda (x y) (if (expr (string->number (parm x))) (cons x y) y)) '() data)
         ;;filter then get the average
-        (foldr (lambda (x y) (if (expr (string->number (expr x))) x y)) '()
+        (foldr (lambda (x y) (if (expr (string->number (parm x))) (cons x y) y)) '()
                (foldr (lambda (x y) (if (same-class (class x) class-t) (cons x y) y)) '() data)))))
 
-;;(define where
-;;  (lambda (data parm list-of-expr [class-t "none"])
-;;    (if (null? list-of-expr)
-;;    data
-;;    (where (filter
-      
+
+
+;;testing plot
+(define thing
+  (plot3d (list (points3d (strlst-to-numlsts iris-raw-num-str) #:sym 'dot #:size 20 #:color 1))))
+
+;;TODO
+;;(rm-column col-name)
+;;(plot-2D list-of-datasets col1 col2)
+
+;;Some test data set for ploting
+(define Iris-virginica (filiter (remove-last iris-raw) petal-width identity "Iris-virginica"))
+(define Iris-versicolor (filiter (remove-last iris-raw) petal-width identity "Iris-versicolor"))
+(define Iris-setosa (filiter (remove-last iris-raw) petal-width identity "Iris-setosa"))
+
+;;(plot-2D list-of-datasets col1 col2) -> plot?
+;; list-of-datasets: list of datasets that are lists of lists
+;; col1: colmun of the data set to plot on the x-axis
+;; col2: colmun of the data set to plot on the y-axis
+
+;;useage: (plot-2D (list Iris-virginica Iris-versicolor) petal-width petal-length)
+
+(define (plot-2D list-of-datasets col1 col2)
+  ;;count is used to make sure each dataset ploted has a different color
+  (let ([count 0])
+    (define (points-ceator list-of-datasets col1 col2 list-of-points)
+       (if (null? list-of-datasets)
+           list-of-points
+           (begin
+             (set! count (+ count 1))
+             (points-ceator (cdr list-of-datasets) col1 col2 (cons  (points(foldr (lambda(x y) (cons (vector (string->number (col1 x)) (string->number (col2 x))) y)) '()  (car list-of-datasets)) #:color count) list-of-points)))))
+   (plot (points-ceator list-of-datasets col1 col2 '()))))
+
+
+             
+;;(plot-3d list-of-datasets col1 col2 col3)
+     
            
     
     
