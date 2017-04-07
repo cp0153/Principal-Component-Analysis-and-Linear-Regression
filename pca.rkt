@@ -4,6 +4,8 @@
 (require csv-reading)
 (require math/array)
 (require plot)
+(require "graphs.rkt")
+(require "data-filitering.rkt")
 
 ;; define list of iris data directly from url
 (define iris-url "https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data")
@@ -48,9 +50,6 @@
 (define (petal-length x) (car (cdr (cdr (cdr x)))))
 (define (class x) (car (cdr (cdr (cdr (cdr x))))))
 
-;;data helper functions
-(define (same-class class1 class2)
-  (string=? class1 class2))
 
 ;;lambdas for filter
 (define less-than 
@@ -71,135 +70,27 @@
 (define identity
     (lambda (x)
       x))
-      
-
-;;Data manipluation functions
-
-;; (total param data class) → number?
-;; data: list
-;; param: procedure (should be one of the data abstractions
-;; class: srting
-
-;;ueasge:
-;;> (total (remove-last iris-raw) petal-width)
-;;> (total (remove-last iris-raw) petal-width "Iris-virginica")
-
-(define total 
-  ;;create a lambda to have an optional arugement
-  (lambda (data parm [class-t "none"])
-    (if (same-class class-t "none")
-        (foldr (lambda (x y) (+ (string->number (parm x)) y)) 0 data)
-        ;;filter then get the average
-        (foldr (lambda (x y) (+ (string->number (parm x)) y)) 0
-               (foldr (lambda (x y) (if (same-class (class x) class-t) (cons x y) y)) '() data)))))
-
-;; (total param data class) → number?
-;; data: list
-;; class: srting
-
-;;ueasge:
-;;> (count (remove-last iris-raw))
-;;> (count (remove-last iris-raw) "Iris-virginica")
-
-(define count
-  ;;create a lambda to have an optional arugement
-  (lambda (data [class-t "none"])
-    (if (same-class class-t "none")
-        (foldr (lambda (x y) (+ 1 y)) 0 data)
-        ;;filter then get the average
-        (foldr (lambda (x y) (+ 1 y)) 0
-               (foldr (lambda (x y) (if (same-class (class x) class-t) (cons x y) y)) '() data)))))
-
-;; (average param data class) → number?
-;; data: list
-;; param: procedure (should be one of the data abstractions
-;; class: srting
-
-;;ueasge:
-;;> (average (remove-last iris-raw) petal-width)
-;;> (average (remove-last iris-raw) petal-width "Iris-virginica")
-
-(define average 
-  ;;create a lambda to have an optional arugement
-  (lambda (data parm [class-t "none"])
-        (/ (total data parm class-t) (count data class-t))))
-  
-
-;; (average param data class) → number?
-;; data: list
-;; param: procedure (should be one of the data abstractions)
-;; class: srting
-
-;;ueasge:
-;;> (standard-deviation (remove-last iris-raw) petal-width)
-;;> (standard-deviation(remove-last iris-raw) petal-width "Iris-virginica")
-(define standard-deviation
-  (lambda (data parm [class-t "none"])
-    (sqrt (/ (foldr (lambda (x y) (+ (expt (- (string->number (parm x)) (average data parm class-t)) 2) y)) 0 data)
-             (total data parm class-t)))))
-
-(define min
-  (lambda (data parm [class-t "none"])
-    (if (same-class class-t "none")
-        (foldr (lambda (x y) (if (< (string->number (parm x)) y) x y)) 9999999999 data)
-        ;;filter then get the average
-        (foldr (lambda (x y) (if (< (string->number (parm x)) y) x y)) 9999999999
-               (foldr (lambda (x y) (if (same-class (class x) class-t) (cons x y) y)) '() data)))))
 
 
-(define max
-  (lambda (data parm [class-t "none"])
-    (if (same-class class-t "none")
-        (foldr (lambda (x y) (if (> (string->number (parm x)) y) x y)) 0 data)
-        ;;filter then get the average
-        (foldr (lambda (x y) (if (> (string->number (parm x)) y) x y)) 0
-               (foldr (lambda (x y) (if (same-class (class x) class-t) (cons x y) y)) '() data)))))
-
-
-(define filiter 
-  (lambda (data parm expr [class-t "none"])
-    (if (same-class class-t "none")
-        (foldr (lambda (x y) (if (expr (string->number (parm x))) (cons x y) y)) '() data)
-        ;;filter then get the average
-        (foldr (lambda (x y) (if (expr (string->number (parm x))) (cons x y) y)) '()
-               (foldr (lambda (x y) (if (same-class (class x) class-t) (cons x y) y)) '() data)))))
-
-
+;;TODO
+;;Plot a 3d graph plot graph
+;;Make a linear regression
+;;make bar graphs
+;;make the graphs have better labels
 
 ;;testing plot
 (define thing
   (plot3d (list (points3d (strlst-to-numlsts iris-raw-num-str) #:sym 'dot #:size 20 #:color 1))))
 
 ;;TODO
-;;(rm-column col-name)
-;;(plot-2D list-of-datasets col1 col2)
+
 
 ;;Some test data set for ploting
 (define Iris-virginica (filiter (remove-last iris-raw) petal-width identity "Iris-virginica"))
 (define Iris-versicolor (filiter (remove-last iris-raw) petal-width identity "Iris-versicolor"))
 (define Iris-setosa (filiter (remove-last iris-raw) petal-width identity "Iris-setosa"))
 
-;;(plot-2D list-of-datasets col1 col2) -> plot?
-;; list-of-datasets: list of datasets that are lists of lists
-;; col1: colmun of the data set to plot on the x-axis
-;; col2: colmun of the data set to plot on the y-axis
-
-;;useage: (plot-2D (list Iris-virginica Iris-versicolor) petal-width petal-length)
-
-(define (plot-2D list-of-datasets col1 col2)
-  ;;count is used to make sure each dataset ploted has a different color
-  (let ([count 0])
-    (define (points-ceator list-of-datasets col1 col2 list-of-points)
-       (if (null? list-of-datasets)
-           list-of-points
-           (begin
-             (set! count (+ count 1))
-             (points-ceator (cdr list-of-datasets) col1 col2 (cons  (points(foldr (lambda(x y) (cons (vector (string->number (col1 x)) (string->number (col2 x))) y)) '()  (car list-of-datasets)) #:color count) list-of-points)))))
-   (plot (points-ceator list-of-datasets col1 col2 '()))))
-
-
              
-;;(plot-3d list-of-datasets col1 col2 col3)
      
            
     
