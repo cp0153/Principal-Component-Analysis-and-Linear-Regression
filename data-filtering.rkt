@@ -3,10 +3,36 @@
 
 (provide total count average standard-deviation min max filiter)
 
+(provide same-class)
+(provide remove-last)
+(provide filter-last-csv)
+(provide str-to-num-lst strlst-to-numlsts)
+
 ;;data helper functions
 (define (same-class class1 class2)
   (string=? class1 class2))
 
+; function to remve last element from list, needed to remove class from iris csv to form a array
+; and to remove the last element
+(define (remove-last lst)
+  (reverse (cdr (reverse lst))))
+
+; function that takes a list of lists, will remove the last list in the first level and final element
+; of all other lists 
+(define (filter-last-csv lst-of-lsts)
+  (define remove-last-lst (remove-last lst-of-lsts))
+  (map (lambda (x) (remove-last x)) remove-last-lst))
+
+; converts a list of strings to numbers recursivly 
+(define (str-to-num-lst items)
+  (if (null? items)
+      '() 
+      (cons (string->number (car items))
+            (str-to-num-lst (cdr items)))))
+
+; converts a list of lists of strings to numbers using a mapping of the str-to-num-lst function 
+(define (strlst-to-numlsts lst-of-str)
+  (map (lambda (x) (str-to-num-lst x)) lst-of-str))
 
 ;;Data manipluation functions
 
@@ -70,7 +96,9 @@
 ;;> (standard-deviation(remove-last iris-raw) petal-width "Iris-virginica")
 (define standard-deviation
   (lambda (data parm [class-t "none"])
-    (sqrt (/ (foldr (lambda (x y) (+ (expt (- (string->number (parm x)) (average data parm class-t)) 2) y)) 0 data)
+    (sqrt (/ (foldr
+              (lambda (x y)
+                (+ (expt (- (string->number (parm x)) (average data parm class-t)) 2) y)) 0 data)
              (total data parm class-t)))))
 
 (define min

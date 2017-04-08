@@ -3,41 +3,48 @@
 (require net/url)
 (require csv-reading)
 (require math/array)
+ (require math/matrix)
 (require plot)
+
+; require custom functions 
 (require "graphs.rkt")
-(require "data-filitering.rkt")
+(require "data-filtering.rkt")
 
 ;; define list of iris data directly from url
 (define iris-url "https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data")
 (define iris-raw ((compose csv->list get-pure-port string->url) iris-url))
 
-; function to remve last element from list, needed to remove class from iris csv to form a array
-; and to remove the last element
-(define (remove-last lst)
-  (reverse (cdr (reverse lst))))
-
-; function that takes a list of lists, will remove the last list in the first level and final element
-; of all other lists 
-(define (filter-last-csv lst-of-lsts)
-  (define remove-last-lst (remove-last lst-of-lsts))
-  (map (lambda (x) (remove-last x)) remove-last-lst))
-
-; converts iris csv to a list with just numbers (stored as string)
+; converts iris csv to a list with just numbers (stored as string), drops the last cololmn in a list
+; of lists 
 (define iris-raw-num-str (filter-last-csv iris-raw))
 
-; converts a list of strings to numbers recursivly 
-(define (str-to-num-lst items)
-  (if (null? items)
-      '() 
-      (cons (string->number (car items))
-            (str-to-num-lst (cdr items)))))
-
-; converts a list of lists of strings to numbers using a mapping of the str-to-num-lst function 
-(define (strlst-to-numlsts lst-of-str)
-  (map (lambda (x) (str-to-num-lst x)) lst-of-str))
-
-; finally create a mutable NxM array of the iris dataset 
+; create a mutable NxM array of the iris dataset 
 (define iris-array (list*->array (strlst-to-numlsts iris-raw-num-str) number?))
+
+; calculate mean and standard diviation
+(define iris-mean 0)
+
+(define iris-std 0)
+
+; function that takes a NXM array and standardizes the values (z = (x - mean) / std)
+(define (standardize-matrix n) 0)
+
+; calculate mean vector (mean of z)
+(define mean-vector 0)
+
+; create N X N matrix of containing covariance of all properties
+(define co-variance-matrix 0)
+
+; calculate eigenvectors and eigenvalues
+(define eigenvalues 0)
+(define eigenvectors 0)
+
+; use eigenvectors with the 2 or 3 highest eigenvalues to create projection matrix
+
+; take dot product of z and projection matrix
+
+; plot with result of dot product
+
 
 ; quick test of 3d plot
 ;(plot3d (points3d (array->list* iris-array))
@@ -71,7 +78,6 @@
     (lambda (x)
       x))
 
-
 ;;TODO
 ;;Plot a 3d graph plot graph
 ;;Make a linear regression
@@ -86,17 +92,6 @@
 
 
 ;;Some test data set for ploting
-(define Iris-virginica (filiter (remove-last iris-raw) petal-width identity "Iris-virginica"))
-(define Iris-versicolor (filiter (remove-last iris-raw) petal-width identity "Iris-versicolor"))
-(define Iris-setosa (filiter (remove-last iris-raw) petal-width identity "Iris-setosa"))
-
-             
-     
-           
-    
-    
-  
-
-
-
-
+;(define Iris-virginica (filiter (remove-last iris-raw) petal-width identity "Iris-virginica"))
+;(define Iris-versicolor (filiter (remove-last iris-raw) petal-width identity "Iris-versicolor"))
+;(define Iris-setosa (filiter (remove-last iris-raw) petal-width identity "Iris-setosa"))

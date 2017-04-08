@@ -19,5 +19,13 @@
            list-of-points
            (begin
              (set! count (+ count 1))
-             (points-ceator (cdr list-of-datasets) col1 col2 (cons  (points(foldr (lambda(x y) (cons (vector (string->number (col1 x)) (string->number (col2 x))) y)) '()  (car list-of-datasets)) #:color count) list-of-points)))))
+             (points-ceator (cdr list-of-datasets) col1 col2
+                            (cons  (points
+                                    (foldr (lambda(x y)
+                                             (cons
+                                              (vector
+                                               (string->number (col1 x))
+                                               (string->number (col2 x))) y))
+                                           '()  (car list-of-datasets))
+                                          #:color count) list-of-points)))))
    (plot (points-ceator list-of-datasets col1 col2 '()))))
