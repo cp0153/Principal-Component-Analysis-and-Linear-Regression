@@ -1,7 +1,7 @@
 #lang racket
 
 
-(provide total count average standard-deviation min max filiter)
+(provide total count average standard-deviation min max filter)
 
 (provide same-class)
 (provide remove-last)
@@ -119,7 +119,7 @@
                (foldr (lambda (x y) (if (same-class (class x) class-t) (cons x y) y)) '() data)))))
 
 
-(define filiter 
+(define filter 
   (lambda (data parm expr [class-t "none"])
     (if (same-class class-t "none")
         (foldr (lambda (x y) (if (expr (string->number (parm x))) (cons x y) y)) '() data)
