@@ -50,13 +50,6 @@
 ;(plot3d (points3d (array->list* iris-array))
 ;          #:altitude 25)
 
-;;Data abstractions
-(define (petal-width x) (car x))
-(define (sepal-length x) (car (cdr x)))
-(define (sepal-width x) (car (cdr (cdr x))))
-(define (petal-length x) (car (cdr (cdr (cdr x)))))
-(define (class x) (car (cdr (cdr (cdr (cdr x))))))
-
 
 ;;lambdas for filter
 (define less-than 
@@ -91,7 +84,9 @@
 ;;TODO
 
 
-;;Some test data set for ploting
-;(define Iris-virginica (filiter (remove-last iris-raw) petal-width identity "Iris-virginica"))
-;(define Iris-versicolor (filiter (remove-last iris-raw) petal-width identity "Iris-versicolor"))
-;(define Iris-setosa (filiter (remove-last iris-raw) petal-width identity "Iris-setosa"))
+;;Some test data set for ploting 
+(define Iris-virginica (filter (remove-last iris-raw) petal-width identity "Iris-virginica"))
+(define Iris-versicolor (filter (remove-last iris-raw) petal-width identity "Iris-versicolor"))
+(define Iris-setosa (filter (remove-last iris-raw) petal-width identity "Iris-setosa"))
+
+

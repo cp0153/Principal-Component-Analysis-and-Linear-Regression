@@ -2,11 +2,20 @@
 
 
 (provide total count average standard-deviation min max filter)
-
+(provide petal-width sepal-length sepal-width petal-length class)
 (provide same-class)
 (provide remove-last)
 (provide filter-last-csv)
 (provide str-to-num-lst strlst-to-numlsts)
+
+
+
+;;Data abstractions
+(define (petal-width x) (car x))
+(define (sepal-length x) (car (cdr x)))
+(define (sepal-width x) (car (cdr (cdr x))))
+(define (petal-length x) (car (cdr (cdr (cdr x)))))
+(define (class x) (car (cdr (cdr (cdr (cdr x))))))
 
 ;;data helper functions
 (define (same-class class1 class2)

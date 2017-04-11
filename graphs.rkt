@@ -1,7 +1,7 @@
 #lang racket
 
 (require plot)
-(provide plot-2D)
+(provide plot-2D plot-3D)
 
 
 ;;(plot-2D list-of-datasets col1 col2) -> plot?
@@ -29,3 +29,24 @@
                                            '()  (car list-of-datasets))
                                           #:color count) list-of-points)))))
    (plot (points-ceator list-of-datasets col1 col2 '()))))
+
+
+
+ (define (plot-3D list-of-datasets col1 col2 col3)
+   (let ([count 0])
+     (define (3D-points-ceator list-of-datasets col1 col2 col3 list-of-points)
+       (if (null? list-of-datasets)
+           list-of-points
+           (begin
+             (set! count (+ count 1))
+             (3D-points-ceator (cdr list-of-datasets) col1 col2 col3
+                               (cons (points3d
+                                      (foldr (lambda(x y)
+                                               (cons
+                                                (list
+                                                 (string->number (col1 x))
+                                                 (string->number (col2 x))
+                                                 (string->number (col3 x))) y))
+                                              '() (car list-of-datasets))
+                                             #:sym 'dot #:size 20 #:color count) list-of-points)))))
+     (plot3d (3D-points-ceator list-of-datasets col1 col2 col3 '()))))
