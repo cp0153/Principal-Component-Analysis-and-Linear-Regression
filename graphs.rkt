@@ -1,8 +1,12 @@
 #lang racket
 
 (require plot)
-(provide plot-2D plot-3D)
+(require "data-filtering.rkt")
+(provide plot-2D plot-3D plot-statics)
 
+(struct annotated-proc (base note)
+   #:property prop:procedure
+              (struct-field-index base))
 
 ;;(plot-2D list-of-datasets col1 col2) -> plot?
 ;; list-of-datasets: list of datasets that are lists of lists
@@ -32,7 +36,26 @@
 
 
 
- (define (plot-3D list-of-datasets col1 col2 col3)
+ ;;(define (plot-3D list-of-datasets col1 col2 col3)
+   ;;(let ([count 0])
+     ;;(define (3D-points-ceator list-of-datasets col1 col2 col3 list-of-points)
+      ;; (if (null? list-of-datasets)
+      ;;     list-of-points
+     ;;      (begin
+     ;;        (set! count (+ count 1))
+     ;;        (3D-points-ceator (cdr list-of-datasets) col1 col2 col3
+     ;;                          (cons (points3d
+      ;;                                (foldr (lambda(x y)
+     ;;                                          (cons
+      ;;                                          (list
+      ;;                                           (string->number (col1 x))
+      ;;                                           (string->number (col2 x))
+      ;;                                           (string->number (col3 x))) y))
+       ;;                                       '() (car list-of-datasets))
+       ;;                                      #:sym 'dot #:size 20 #:color count) list-of-points)))))
+    ;; (plot3d (3D-points-ceator list-of-datasets col1 col2 col3 '()))))
+
+(define (plot-3D list-of-datasets col1 col2 col3)
    (let ([count 0])
      (define (3D-points-ceator list-of-datasets col1 col2 col3 list-of-points)
        (if (null? list-of-datasets)
@@ -50,3 +73,22 @@
                                               '() (car list-of-datasets))
                                              #:sym 'dot #:size 20 #:color count) list-of-points)))))
      (plot3d (3D-points-ceator list-of-datasets col1 col2 col3 '()))))
+
+
+;; useage (plot-statics 
+(define (plot-statics data-set function param list-of-classes)
+  (let ([count 0]
+       [min -1])
+    (define (hisogram-creator dataset function param list-of-classes list-of-hisograms)
+      (if (null? list-of-classes)
+          list-of-hisograms
+          (begin
+            (set! count (+ count 1))
+            (set! min (+ min 1))
+            (hisogram-creator dataset function param (cdr list-of-classes)
+                              (cons (discrete-histogram
+                                      (list
+                                        (vector
+                                         (class (car (filter dataset param identity (car list-of-classes))))
+                                         (function dataset param (car list-of-classes)))) #:x-min min #:color count) list-of-hisograms)))))
+  (plot (hisogram-creator data-set function param list-of-classes '()) #:x-label "Class" #:y-label (annotated-proc-note param))))

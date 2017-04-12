@@ -7,15 +7,22 @@
 (provide remove-last)
 (provide filter-last-csv)
 (provide str-to-num-lst strlst-to-numlsts)
+(provide annotated-proc)
 
 
+;;used for data abstractions
+(struct annotated-proc (base note)
+   #:property prop:procedure
+              (struct-field-index base))
 
 ;;Data abstractions
-(define (petal-width x) (car x))
-(define (sepal-length x) (car (cdr x)))
-(define (sepal-width x) (car (cdr (cdr x))))
-(define (petal-length x) (car (cdr (cdr (cdr x)))))
-(define (class x) (car (cdr (cdr (cdr (cdr x))))))
+
+
+(define petal-width (annotated-proc (lambda (x)  (car x)) "Petal Width"))
+(define sepal-length (annotated-proc (lambda (x)  (car (cdr x))) "Sepal Length"))
+(define sepal-width (annotated-proc  (lambda (x)  (car (cdr (cdr x)))) "Sepal Width"))
+(define petal-length (annotated-proc  (lambda (x)  (car (cdr (cdr (cdr x))))) "Petal Length"))
+(define class  (annotated-proc  (lambda (x)  (car (cdr (cdr (cdr (cdr x)))))) "Class"))
 
 ;;data helper functions
 (define (same-class class1 class2)
