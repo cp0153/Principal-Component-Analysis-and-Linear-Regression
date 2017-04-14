@@ -13,26 +13,30 @@
 ;; col1: colmun of the data set to plot on the x-axis
 ;; col2: colmun of the data set to plot on the y-axis
 
-;;useage: (plot-2D (list Iris-virginica Iris-versicolor) petal-width petal-length)
+;;useage: (plot-2D (list Iris-virginica Iris-versicolor) petal-width petal-length 'none)
 
-(define (plot-2D list-of-datasets col1 col2)
+(define (plot-2D list-of-datasets col1 col2 regession)
   ;;count is used to make sure each dataset ploted has a different color
-  (let ([count 0])
-    (define (points-ceator list-of-datasets col1 col2 list-of-points)
-       (if (null? list-of-datasets)
-           list-of-points
-           (begin
-             (set! count (+ count 1))
-             (points-ceator (cdr list-of-datasets) col1 col2
-                            (cons  (points
-                                    (foldr (lambda(x y)
-                                             (cons
-                                              (vector
-                                               (string->number (col1 x))
-                                               (string->number (col2 x))) y))
-                                           '()  (car list-of-datasets))
-                                          #:color count) list-of-points)))))
+ (let ([count 0]
+       [regression-vals (make-linear-regression (merge-lists list-of-datasets) col1 col2)])
+     (define (points-ceator list-of-datasets col1 col2 list-of-points)
+        (if (null? list-of-datasets)
+            (if (eqv? regession 'none)
+                list-of-points
+                (cons (function (lambda (x) (+ (* (car regression-vals) x) (car (cdr regression-vals))))) list-of-points))
+            (begin
+              (set! count (+ count 1))
+              (points-ceator (cdr list-of-datasets) col1 col2
+                             (cons  (points
+                                     (foldr (lambda(x y)
+                                              (cons
+                                               (vector
+                                                (string->number (col1 x))
+                                                (string->number (col2 x))) y))
+                                            '()  (car list-of-datasets))
+                                           #:color count) list-of-points)))))
    (plot (points-ceator list-of-datasets col1 col2 '()))))
+
 
 
 
@@ -91,4 +95,4 @@
                                         (vector
                                          (class (car (filter dataset param identity (car list-of-classes))))
                                          (function dataset param (car list-of-classes)))) #:x-min min #:color count) list-of-hisograms)))))
-  (plot (hisogram-creator data-set function param list-of-classes '()) #:x-label "Class" #:y-label (annotated-proc-note param))))
+  (plot (hisogram-creator data-set function param list-of-classes '()) #:x-label "Class" #:y-label (param 'name))))

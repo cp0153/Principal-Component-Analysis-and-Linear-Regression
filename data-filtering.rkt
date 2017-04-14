@@ -1,28 +1,49 @@
 #lang racket
 
 
-(provide total count average standard-deviation min max filter)
+(provide total count average standard-deviation min max filter make-linear-regression)
 (provide petal-width sepal-length sepal-width petal-length class)
 (provide same-class)
 (provide remove-last)
 (provide filter-last-csv)
 (provide str-to-num-lst strlst-to-numlsts)
-(provide annotated-proc)
+(provide merge-lists)
 
 
 ;;used for data abstractions
-(struct annotated-proc (base note)
-   #:property prop:procedure
-              (struct-field-index base))
 
 ;;Data abstractions
 
 
-(define petal-width (annotated-proc (lambda (x)  (car x)) "Petal Width"))
-(define sepal-length (annotated-proc (lambda (x)  (car (cdr x))) "Sepal Length"))
-(define sepal-width (annotated-proc  (lambda (x)  (car (cdr (cdr x)))) "Sepal Width"))
-(define petal-length (annotated-proc  (lambda (x)  (car (cdr (cdr (cdr x))))) "Petal Length"))
-(define class  (annotated-proc  (lambda (x)  (car (cdr (cdr (cdr (cdr x)))))) "Class"))
+(define petal-width
+  (lambda (x)
+    (if (eqv? x 'name)
+    "Petal Width"
+    (car x))))
+
+(define sepal-length
+  (lambda (x)
+    (if (eqv? x 'name)
+        "Sepal Length"
+        (car (cdr x)))))
+
+(define sepal-width
+  (lambda (x)
+    (if (eqv? x 'name)
+        "Sepal Width"
+        (car (cdr (cdr x))))))
+
+(define petal-length
+  (lambda (x)
+    (if (eqv? x 'name)
+         "Petal Length"
+         (car (cdr (cdr (cdr x)))))))
+
+(define class
+  (lambda (x)
+    (if (eqv? x 'name)
+        "Class"
+        (car (cdr (cdr (cdr (cdr x))))))))
 
 ;;data helper functions
 (define (same-class class1 class2)
@@ -142,3 +163,28 @@
         ;;filter then get the average
         (foldr (lambda (x y) (if (expr (string->number (parm x))) (cons x y) y)) '()
                (foldr (lambda (x y) (if (same-class (class x) class-t) (cons x y) y)) '() data)))))
+
+  
+(define (calc-linear-regression x-points y-points)
+  (define (mergelist x y)
+    (if (or (null? x) (null? y))
+    '()
+    (cons (list (car x) (car y))
+          (mergelist (cdr x) (cdr y)))))         
+  (let* ([x-mean (/ (foldr + 0 x-points) (length x-points))]
+         [y-mean (/ (foldr + 0 y-points) (length y-points))]
+         [numerator (foldr (lambda(x y) (+ (* (- (car x) x-mean) (- (car (cdr x)) y-mean))))  0  (mergelist x-points y-points))]
+         [denominator (foldr (lambda(x y) (+ (expt (- x y-mean) 2)))  0 x-points)]
+         [slope (/ numerator denominator)]
+         [intercept (- y-mean (* slope x-mean))])
+    (list slope intercept)))
+
+(define (make-linear-regression data-set col1 col2)
+  (calc-linear-regression (foldr (lambda(x y) (cons (string->number (col1 x)) y)) '() data-set) (foldr (lambda(x y) (cons (string->number (col2 x)) y)) '() data-set)))
+  ;(foldr (lambda(x y) (cons (col1 x) y)) '() data-set))
+  ;data-set)
+
+(define (merge-lists list-of-lists)
+  (if (null? list-of-lists)
+      '()
+      (append (car list-of-lists) (merge-lists (cdr list-of-lists)))))
