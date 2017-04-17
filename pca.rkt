@@ -3,7 +3,7 @@
 (require net/url)
 (require csv-reading)
 (require math/array)
- (require math/matrix)
+(require math/matrix)
 (require plot)
 
 ; require custom functions 
@@ -21,19 +21,43 @@
 ; create a mutable NxM array of the iris dataset 
 (define iris-array (list*->array (strlst-to-numlsts iris-raw-num-str) number?))
 
-; calculate mean and standard diviation
-(define iris-mean 0)
+; calculate mean and standard diviation or iris
 
-(define iris-std 0)
+(define iris-sum (array-axis-sum iris-array 0))
+
+; function that takes two arguments and matrix and axis to operate along to calculate mean
+; axis zero means downwards across rows, 1 means along col for a 2 dimentional array
+(define (matrix-mean matrix axis)
+  (array/ (array-axis-sum matrix axis) (array (vector-ref (array-shape matrix) 0))))
+
+(define iris-mean (matrix-mean iris-array 0))
+
+; function that takes two arguments and matrix and axis to operate along to calculate the standard
+; diviation
+; axis zero means downwards across rows, 1 means along col for a 2 dimentional array
+(define (matrix-std matrix axis)
+  (array-map sqrt (array/
+                   (array-axis-sum (array-map sqr (array- matrix (matrix-mean matrix axis))) axis)
+                   (array (vector-ref (array-shape matrix) axis))
+                   )))
+
+(define iris-std (matrix-std iris-array 0))
 
 ; function that takes a NXM array and standardizes the values (z = (x - mean) / std)
-(define (standardize-matrix n) 0)
+(define (standardize-matrix matrix)
+  (array/ (array- matrix (matrix-mean matrix 0)) (matrix-std matrix 0)))
 
-; calculate mean vector (mean of z)
-(define mean-vector 0)
+; define stanardized iris
+(define z (standardize-matrix iris-array))
+
+; calculate mean vector (mean of z) (might not work on small numbers?)
+(define mean-vector (matrix-mean z 0))
 
 ; create N X N matrix of containing covariance of all properties
-(define co-variance-matrix 0)
+(define co-variance-matrix
+  (array/
+   (array* (array-axis-swap (array- z mean-vector) 1 0) (array- z mean-vector))
+   (array (- (vector-ref (array-shape z) 0) 1))))
 
 ; calculate eigenvectors and eigenvalues
 (define eigenvalues 0)
