@@ -5,6 +5,10 @@
 (require math/array)
 (require math/matrix)
 (require plot)
+(require db)
+
+;; db connection
+(define conn (sqlite3-connect #:database "my.db"))
 
 ; require custom functions 
 (require "graphs.rkt")
@@ -53,22 +57,74 @@
 ; calculate mean vector (mean of z) (might not work on small numbers?)
 (define mean-vector (matrix-mean z 0))
 
-; create N X N matrix of containing covariance of all properties
-(define co-variance-matrix
-  (array/
-   (array* (array-axis-swap (array- z mean-vector) 1 0) (array- z mean-vector))
-   (array (- (vector-ref (array-shape z) 0) 1))))
+; create N X N matrix of containing covariance of all properties, need to figure out how to
+; multiply matrices of different dimensions in racket, hardcoded covariance matrix to define it for
+; now, should be cov[x, y] = ∑i (xi – E[x]) (yi – E[y])  / (n-1) or (array z - mean vector transposed)
+; multiplied by (z - mean vector) all divided by N - 1 (149 in this case) 
+(define iris-co-variance-matrix
+;  (array/
+;   (array* (array-axis-swap (array- z mean-vector) 1 0) (array- z mean-vector))
+;   (array (- (vector-ref (array-shape z) 0) 1))))
+  (array #[#[1.00671141 -0.11010327 0.87760486 0.82344326]
+           #[-0.11010327  1.00671141 -0.42333835 -0.358937]
+           #[0.87760486 -0.42333835  1.00671141  0.96921855]
+           #[0.82344326 -0.358937    0.96921855  1.00671141]]))
+           
 
 ; calculate eigenvectors and eigenvalues
-(define eigenvalues 0)
-(define eigenvectors 0)
+(define iris-eigenvalues
+  (array #[2.93035378  0.92740362  0.14834223  0.02074601]))
+           
+(define iris-eigenvectors
+  (array #[#[0.52237162 -0.37231836 -0.72101681  0.26199559]
+           #[-0.26335492 -0.92555649  0.24203288 -0.12413481]
+           #[0.58125401 -0.02109478  0.14089226 -0.80115427]
+           #[0.56561105 -0.06541577  0.6338014   0.52354627]]))
 
 ; use eigenvectors with the 2 or 3 highest eigenvalues to create projection matrix
+; this funciton takes two arguments, the first is an array of eigenvectors, the second is the number
+; number of dimentions for the new array
+; want to define a function here that takes an array and only keeps the n first number of columns
+; like 3x3 array and 2 will remove the last column from it
+(define (projection-matrix eigenvectors dim) 0)
+;  (define (iter dim count)
+;    (if (> count dim)
+;        eigenvectors
+;        ((map (lambda (x) (remove-last  x)) eigenvectors))))
+; (iter dim 1))
 
-; take dot product of z and projection matrix
+; take the first 2 or 3 columns from the corresponding eigenvector/value pairs 
+(define iris-projection-matrix
+  (array #[#[0.52237162 -0.37231836 -0.72101681]
+           #[-0.26335492 -0.92555649  0.24203288]
+           #[0.58125401 -0.02109478  0.14089226]
+           #[0.56561105 -0.06541577  0.6338014]]))
 
 ; plot with result of dot product
+; z mulitplied by the projection-matrix
+(define iris-pca
+  0)
+; placeholder for actual graph once I figure out matrix muliplication and the eigenvectors/values
+(define pca1 (query-rows
+                  conn
+                  "select pc1, pc2, pc3 from iris_pca where class = 'Iris-setosa'"))
 
+(define pca2 (query-rows
+                  conn
+                  "select pc1, pc2, pc3 from iris_pca where class = 'Iris-versicolor'"))
+
+(define pca3 (query-rows
+                  conn
+                  "select pc1, pc2, pc3 from iris_pca where class = 'Iris-virginica'"))
+
+; pca of iris dataset
+(plot3d (list (points3d pca1 #:sym 'dot #:size 20 #:color 1)
+              (points3d pca2 #:sym 'dot #:size 20 #:color 2)
+              (points3d pca3 #:sym 'dot #:size 20 #:color 3))
+        #:altitude 25
+        #:title "3D PCA of iris dataset")
+
+(disconnect conn)
 
 ; quick test of 3d plot
 ;(plot3d (points3d (array->list* iris-array))
