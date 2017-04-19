@@ -128,12 +128,21 @@
 ;; usage:
 ;; > (standard-deviation (remove-last iris-raw) petal-width)
 ;; > (standard-deviation(remove-last iris-raw) petal-width "Iris-virginica")
+;;(define standard-deviation
+;;  (lambda (data parm [class-t "none"])
+;;    (sqrt (/ (foldr
+;;              (lambda (x y)
+;;                (+ (expt (- (string->number (parm x)) (average data parm class-t)) 2) y)) 0 data)
+;;             (total data parm class-t)))))
+
 (define standard-deviation
   (lambda (data parm [class-t "none"])
-    (sqrt (/ (foldr
-              (lambda (x y)
-                (+ (expt (- (string->number (parm x)) (average data parm class-t)) 2) y)) 0 data)
-             (total data parm class-t)))))
+    (let* ([total-points (total data parm class-t)]
+           [mean (average data parm class-t)])
+      (sqrt (/ (foldr + 0  (map (lambda (x)
+                                  (expt (- (string->number (parm x)) mean) 2))
+                                  data))total-points)))))
+
 
 (define min
   (lambda (data parm [class-t "none"])

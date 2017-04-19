@@ -36,8 +36,12 @@
                                                 (string->number (col1 x))
                                                 (string->number (col2 x))) y))
                                             '()  (car list-of-datasets))
+                                           #:label (string-append "Dataset " (number->string count))
                                            #:color count) list-of-points)))))
-   (plot (points-creator list-of-datasets col1 col2 '()))))
+   (plot (points-creator list-of-datasets col1 col2 '())
+         #:title (string-append (col1 'name) " vs " (col2 'name))
+         #:x-label (col1 'name)
+         #:y-label (col2 'name))))
 
 
 
@@ -77,11 +81,16 @@
                                                  (string->number (col2 x))
                                                  (string->number (col3 x))) y))
                                               '() (car list-of-datasets))
-                                             #:sym 'dot #:size 20 #:color count) list-of-points)))))
-     (plot3d (3D-points-creator list-of-datasets col1 col2 col3 '()))))
+                                             #:label (string-append "Dataset " (number->string count))
+                                             #:color count) list-of-points)))))
+     (plot3d (3D-points-creator list-of-datasets col1 col2 col3 '())
+             #:title (string-append (col1 'name) " vs " (col2 'name) " vs " (col3 'name))
+             #:x-label (col1 'name)
+             #:y-label (col2 'name)
+             #:z-label (col3 'name))))
 
 
-;; usage (plot-statics
+;; usage (plot-statics (remove-last iris-raw) average sepal-width (list "Iris-virginica" "Iris-versicolor" "Iris-setosa"))
 (define (plot-statics data-set function param list-of-classes)
   (let ([count 0]
        [min -1])
@@ -100,7 +109,7 @@
                                                          (car list-of-classes))))
                                          (function dataset param (car list-of-classes))))
                                       #:x-min min #:color count) list-of-histograms)))))
-  (plot
-   (histogram-creator data-set function param list-of-classes '())
+  (plot(histogram-creator data-set function param list-of-classes '())
+   #:title (string-append (param 'name) " Comparision")
    #:x-label "Class"
    #:y-label (param 'name))))
