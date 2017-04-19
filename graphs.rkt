@@ -21,7 +21,7 @@
        [regression-vals (make-linear-regression (merge-lists list-of-datasets) col1 col2)])
      (define (points-creator list-of-datasets col1 col2 list-of-points)
         (if (null? list-of-datasets)
-            (if (eqv? regession 'none)
+            (if (eqv? regression 'none)
                 list-of-points
                 (cons (function
                        (lambda (x) (+ (* (car regression-vals) x) (car (cdr regression-vals)))))
@@ -37,7 +37,7 @@
                                                 (string->number (col2 x))) y))
                                             '()  (car list-of-datasets))
                                            #:color count) list-of-points)))))
-   (plot (points-ceator list-of-datasets col1 col2 '()))))
+   (plot (points-creator list-of-datasets col1 col2 '()))))
 
 
 

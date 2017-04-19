@@ -1,4 +1,4 @@
-﻿#lang racket
+#lang racket
 
 (provide total count average standard-deviation min max filter make-linear-regression)
 (provide petal-width sepal-length sepal-width petal-length class)
