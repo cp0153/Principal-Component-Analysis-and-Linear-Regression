@@ -1,5 +1,4 @@
-#lang racket
-
+﻿#lang racket
 
 (provide total count average standard-deviation min max filter make-linear-regression)
 (provide petal-width sepal-length sepal-width petal-length class)
@@ -9,11 +8,9 @@
 (provide str-to-num-lst strlst-to-numlsts)
 (provide merge-lists)
 
-
 ;;used for data abstractions
 
-;;Data abstractions
-
+;;Data abstractions of iris dataset
 
 (define petal-width
   (lambda (x)
@@ -45,80 +42,80 @@
         "Class"
         (car (cdr (cdr (cdr (cdr x))))))))
 
-;;data helper functions
+;; data helper functions
 (define (same-class class1 class2)
   (string=? class1 class2))
 
-; function to remve last element from list, needed to remove class from iris csv to form a array
-; and to remove the last element
+;; function to remove last element from list, needed to remove class from iris csv to form an array
+;; and to remove the last element
 (define (remove-last lst)
   (reverse (cdr (reverse lst))))
 
-; function that takes a list of lists, will remove the last list in the first level and final element
-; of all other lists 
+;; function that takes a list of lists created from a csv file, will remove the last list in the
+;; first level and final element of all other lists 
 (define (filter-last-csv lst-of-lsts)
   (define remove-last-lst (remove-last lst-of-lsts))
   (map (lambda (x) (remove-last x)) remove-last-lst))
 
-; converts a list of strings to numbers recursivly 
+;; converts a list of strings to numbers recursively 
 (define (str-to-num-lst items)
   (if (null? items)
       '() 
       (cons (string->number (car items))
             (str-to-num-lst (cdr items)))))
 
-; converts a list of lists of strings to numbers using a mapping of the str-to-num-lst function 
+;; converts a list of lists of strings to numbers using a mapping of the str-to-num-lst function 
 (define (strlst-to-numlsts lst-of-str)
   (map (lambda (x) (str-to-num-lst x)) lst-of-str))
 
-;;Data manipluation functions
+;; Data manipulation functions
 
 ;; (total param data class) → number?
 ;; data: list
 ;; param: procedure (should be one of the data abstractions
-;; class: srting
+;; class: string
 
-;;ueasge:
-;;> (total (remove-last iris-raw) petal-width)
-;;> (total (remove-last iris-raw) petal-width "Iris-virginica")
+;; usage:
+;; > (total (remove-last iris-raw) petal-width)
+;; > (total (remove-last iris-raw) petal-width "Iris-virginica")
 
 (define total 
-  ;;create a lambda to have an optional arugement
+  ;; create a lambda to have an optional argument
   (lambda (data parm [class-t "none"])
     (if (same-class class-t "none")
         (foldr (lambda (x y) (+ (string->number (parm x)) y)) 0 data)
-        ;;filter then get the average
+        ;; filter then get the average
         (foldr (lambda (x y) (+ (string->number (parm x)) y)) 0
                (foldr (lambda (x y) (if (same-class (class x) class-t) (cons x y) y)) '() data)))))
 
 ;; (total param data class) → number?
 ;; data: list
-;; class: srting
+;; class: string
 
-;;ueasge:
-;;> (count (remove-last iris-raw))
-;;> (count (remove-last iris-raw) "Iris-virginica")
+;; usage:
+;; > (count (remove-last iris-raw))
+;; > (count (remove-last iris-raw) "Iris-virginica")
 
 (define count
-  ;;create a lambda to have an optional arugement
+  ;; create a lambda to have an optional argument
   (lambda (data [class-t "none"])
     (if (same-class class-t "none")
         (foldr (lambda (x y) (+ 1 y)) 0 data)
-        ;;filter then get the average
+        ;; filter then get the average
         (foldr (lambda (x y) (+ 1 y)) 0
                (foldr (lambda (x y) (if (same-class (class x) class-t) (cons x y) y)) '() data)))))
 
 ;; (average param data class) → number?
 ;; data: list
 ;; param: procedure (should be one of the data abstractions
-;; class: srting
+;; class: string
 
-;;ueasge:
-;;> (average (remove-last iris-raw) petal-width)
-;;> (average (remove-last iris-raw) petal-width "Iris-virginica")
+;; usage:
+;; > (average (remove-last iris-raw) petal-width)
+;; > (average (remove-last iris-raw) petal-width "Iris-virginica")
 
 (define average 
-  ;;create a lambda to have an optional arugement
+  ;; create a lambda to have an optional argument
   (lambda (data parm [class-t "none"])
         (/ (total data parm class-t) (count data class-t))))
   
@@ -126,11 +123,11 @@
 ;; (average param data class) → number?
 ;; data: list
 ;; param: procedure (should be one of the data abstractions)
-;; class: srting
+;; class: string
 
-;;ueasge:
-;;> (standard-deviation (remove-last iris-raw) petal-width)
-;;> (standard-deviation(remove-last iris-raw) petal-width "Iris-virginica")
+;; usage:
+;; > (standard-deviation (remove-last iris-raw) petal-width)
+;; > (standard-deviation(remove-last iris-raw) petal-width "Iris-virginica")
 (define standard-deviation
   (lambda (data parm [class-t "none"])
     (sqrt (/ (foldr
@@ -173,17 +170,28 @@
           (mergelist (cdr x) (cdr y)))))         
   (let* ([x-mean (/ (foldr + 0 x-points) (length x-points))]
          [y-mean (/ (foldr + 0 y-points) (length y-points))]
-         [numerator (foldr (lambda(x y) (+ (* (- (car x) x-mean) (- (car (cdr x)) y-mean))))  0  (mergelist x-points y-points))]
+         [numerator (foldr
+                     (lambda(x y) (+ (* (- (car x) x-mean) (- (car (cdr x)) y-mean))))
+                     0
+                     (mergelist x-points y-points))]
          [denominator (foldr (lambda(x y) (+ (expt (- x y-mean) 2)))  0 x-points)]
          [slope (/ numerator denominator)]
          [intercept (- y-mean (* slope x-mean))])
     (list slope intercept)))
 
 (define (make-linear-regression data-set col1 col2)
-  (calc-linear-regression (foldr (lambda(x y) (cons (string->number (col1 x)) y)) '() data-set) (foldr (lambda(x y) (cons (string->number (col2 x)) y)) '() data-set)))
+  (calc-linear-regression (foldr
+                           (lambda(x y) (cons (string->number (col1 x)) y))
+                           '() data-set)
+                          (foldr
+                           (lambda(x y) (cons (string->number (col2 x)) y))
+                           '()
+                           data-set)
+                          ))
   ;(foldr (lambda(x y) (cons (col1 x) y)) '() data-set))
   ;data-set)
 
+;; function that flattens a list of lists into a single lists
 (define (merge-lists list-of-lists)
   (if (null? list-of-lists)
       '()

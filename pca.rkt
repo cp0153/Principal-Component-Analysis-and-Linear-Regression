@@ -18,44 +18,42 @@
 (define iris-url "https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data")
 (define iris-raw ((compose csv->list get-pure-port string->url) iris-url))
 
-; converts iris csv to a list with just numbers (stored as string), drops the last cololmn in a list
+; converts iris csv to a list with just numbers (stored as string), drops the last column in a list
 ; of lists 
 (define iris-raw-num-str (filter-last-csv iris-raw))
 
 ; create a mutable NxM array of the iris dataset 
 (define iris-array (list*->array (strlst-to-numlsts iris-raw-num-str) number?))
 
-; calculate mean and standard diviation or iris
+; calculate mean and standard deviation or iris
 
+; define an array with the sum of each column 
 (define iris-sum (array-axis-sum iris-array 0))
 
-; function that takes two arguments and matrix and axis to operate along to calculate mean
-; axis zero means downwards across rows, 1 means along col for a 2 dimentional array
-(define (matrix-mean matrix axis)
-  (array/ (array-axis-sum matrix axis) (array (vector-ref (array-shape matrix) 0))))
+; function that takes one argument, a 2d array (matrix) and returns the mean of every column
+(define (matrix-mean matrix)
+  (array/ (array-axis-sum matrix 0) (array (vector-ref (array-shape matrix) 0))))
 
-(define iris-mean (matrix-mean iris-array 0))
+(define iris-mean (matrix-mean iris-array))
 
-; function that takes two arguments and matrix and axis to operate along to calculate the standard
-; diviation
-; axis zero means downwards across rows, 1 means along col for a 2 dimentional array
-(define (matrix-std matrix axis)
+; function that takes one argument, a 2d array (matrix) and returns the std of every column
+(define (matrix-std matrix)
   (array-map sqrt (array/
-                   (array-axis-sum (array-map sqr (array- matrix (matrix-mean matrix axis))) axis)
-                   (array (vector-ref (array-shape matrix) axis))
+                   (array-axis-sum (array-map sqr (array- matrix (matrix-mean matrix))) 0)
+                   (array (vector-ref (array-shape matrix) 0))
                    )))
 
-(define iris-std (matrix-std iris-array 0))
+(define iris-std (matrix-std iris-array))
 
 ; function that takes a NXM array and standardizes the values (z = (x - mean) / std)
 (define (standardize-matrix matrix)
-  (array/ (array- matrix (matrix-mean matrix 0)) (matrix-std matrix 0)))
+  (array/ (array- matrix (matrix-mean matrix)) (matrix-std matrix)))
 
-; define stanardized iris
+; define standardized iris
 (define z (standardize-matrix iris-array))
 
-; calculate mean vector (mean of z) (might not work on small numbers?)
-(define mean-vector (matrix-mean z 0))
+; calculate mean vector (mean of z)
+(define mean-vector (matrix-mean z))
 
 ; create N X N matrix of containing covariance of all properties, need to figure out how to
 ; multiply matrices of different dimensions in racket, hardcoded covariance matrix to define it for
@@ -82,8 +80,8 @@
            #[0.56561105 -0.06541577  0.6338014   0.52354627]]))
 
 ; use eigenvectors with the 2 or 3 highest eigenvalues to create projection matrix
-; this funciton takes two arguments, the first is an array of eigenvectors, the second is the number
-; number of dimentions for the new array
+; this function takes two arguments, the first is an array of eigenvectors, the second is the number
+; number of dimensions for the new array
 ; want to define a function here that takes an array and only keeps the n first number of columns
 ; like 3x3 array and 2 will remove the last column from it
 (define (projection-matrix eigenvectors dim) 0)
@@ -101,10 +99,10 @@
            #[0.56561105 -0.06541577  0.6338014]]))
 
 ; plot with result of dot product
-; z mulitplied by the projection-matrix
+; z multiplied by the projection-matrix
 (define iris-pca
   0)
-; placeholder for actual graph once I figure out matrix muliplication and the eigenvectors/values
+; placeholder for actual graph once I figure out matrix multiplication and the eigenvectors/values
 (define pca1 (query-rows
                   conn
                   "select pc1, pc2, pc3 from iris_pca where class = 'Iris-setosa'"))
@@ -164,7 +162,7 @@
 ;;TODO
 
 
-;;Some test data set for ploting 
+;;Some test data set for plotting
 (define Iris-virginica (filter (remove-last iris-raw) petal-width identity "Iris-virginica"))
 (define Iris-versicolor (filter (remove-last iris-raw) petal-width identity "Iris-versicolor"))
 (define Iris-setosa (filter (remove-last iris-raw) petal-width identity "Iris-setosa"))
