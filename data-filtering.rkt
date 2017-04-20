@@ -1,5 +1,7 @@
 #lang racket
 
+(require math/statistics)
+
 (provide total count average standard-deviation min max filter make-linear-regression)
 (provide petal-width sepal-length sepal-width petal-length class)
 (provide same-class)
@@ -135,13 +137,20 @@
 ;;                (+ (expt (- (string->number (parm x)) (average data parm class-t)) 2) y)) 0 data)
 ;;             (total data parm class-t)))))
 
+;;(define standard-deviation
+;;  (lambda (data parm [class-t "none"])
+;;    (let* ([total-points (total data parm class-t)]
+;;           [mean (average data parm class-t)])
+;;     (sqrt (/ (foldr + 0  (map (lambda (x)
+;;                                  (expt (- (string->number (parm x)) mean) 2))
+;;                                  data))total-points)))))
+
 (define standard-deviation
   (lambda (data parm [class-t "none"])
-    (let* ([total-points (total data parm class-t)]
-           [mean (average data parm class-t)])
-      (sqrt (/ (foldr + 0  (map (lambda (x)
-                                  (expt (- (string->number (parm x)) mean) 2))
-                                  data))total-points)))))
+    (stddev (map (lambda (x) (string->number (parm x))) data))))
+;;     (sqrt (/ (foldr + 0  (map (lambda (x)
+;;                                  (expt (- (string->number (parm x)) mean) 2))
+;;                                  data))total-points)))))
 
 
 ;; min data parm class-t) → number?
