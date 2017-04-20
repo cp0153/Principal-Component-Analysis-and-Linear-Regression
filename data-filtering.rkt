@@ -88,7 +88,7 @@
         (foldr (lambda (x y) (+ (string->number (parm x)) y)) 0
                (foldr (lambda (x y) (if (same-class (class x) class-t) (cons x y) y)) '() data)))))
 
-;; (total param data class) → number?
+;; (count data class) → number?
 ;; data: list
 ;; class: string
 
@@ -120,7 +120,7 @@
         (/ (total data parm class-t) (count data class-t))))
   
 
-;; (average param data class) → number?
+;; (standard-deviation param data class) → number?
 ;; data: list
 ;; param: procedure (should be one of the data abstractions)
 ;; class: string
@@ -144,21 +144,33 @@
                                   data))total-points)))))
 
 
+;; min data parm class-t) → number?
+;; data: list
+;; parm: procedure (should be one of the data abstractions)
+;; class: string
+
 (define min
   (lambda (data parm [class-t "none"])
     (if (same-class class-t "none")
-        (foldr (lambda (x y) (if (< (string->number (parm x)) y) x y)) 9999999999 data)
+        (foldr (lambda (x y) (if (< (string->number (parm x)) y)
+                                 (string->number (parm x))
+                                 y)) 9999999999 data)
         ;;filter then get the average
-        (foldr (lambda (x y) (if (< (string->number (parm x)) y) x y)) 9999999999
+        (foldr (lambda (x y) (if (< (string->number (parm x)) y)
+                                 (string->number (parm x))
+                                 y)) 9999999999
                (foldr (lambda (x y) (if (same-class (class x) class-t) (cons x y) y)) '() data)))))
 
-
+;; (max data parm class-t) → number?
+;; data: list
+;; parm: procedure (should be one of the data abstractions)
+;; class: string
 (define max
   (lambda (data parm [class-t "none"])
     (if (same-class class-t "none")
-        (foldr (lambda (x y) (if (> (string->number (parm x)) y) x y)) 0 data)
+        (foldr (lambda (x y) (if (> (string->number (parm x)) y) (string->number (parm x)) y)) 0 data)
         ;;filter then get the average
-        (foldr (lambda (x y) (if (> (string->number (parm x)) y) x y)) 0
+        (foldr (lambda (x y) (if (> (string->number (parm x)) y)(string->number (parm x)) y)) 0
                (foldr (lambda (x y) (if (same-class (class x) class-t) (cons x y) y)) '() data)))))
 
 
@@ -170,8 +182,15 @@
         (foldr (lambda (x y) (if (expr (string->number (parm x))) (cons x y) y)) '()
                (foldr (lambda (x y) (if (same-class (class x) class-t) (cons x y) y)) '() data)))))
 
-  
+
+;;Calculates the alpha and the beta for the linear reggresion
+;; x-points -> list of numbers
+;; y-points -> list of numbers
+;; returns -> a list of two elments the beta and the alpha 
+
 (define (calc-linear-regression x-points y-points)
+  ;;takes two list an create a new list with each element being
+  ;; a pair of the nth element of that list
   (define (mergelist x y)
     (if (or (null? x) (null? y))
     '()
@@ -188,6 +207,11 @@
          [intercept (- y-mean (* slope x-mean))])
     (list slope intercept)))
 
+;; takes a data set an extracts the two paramters passed to the function
+;; also turns the strings into numbers
+;; data -> list cotainin all the data from an entry in the database
+;; col1 -> the first parameter to exract
+;; col2 -> the second parameter to exract
 (define (make-linear-regression data-set col1 col2)
   (calc-linear-regression (foldr
                            (lambda(x y) (cons (string->number (col1 x)) y))
