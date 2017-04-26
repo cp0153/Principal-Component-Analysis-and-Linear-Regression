@@ -11,16 +11,20 @@ libraries.
 In order to implement the project we plant to use several approaches from the class.
 
 We will be using data abstraction by taking a data set from a CSV and storing it in a list of lists and 2d arrays, like
-a table. We will also be using selectors to get at the various columns in the data
+a table. We used also be using selectors to get at the various columns in the data.
 
 We will be using recursion throughout the project since several different list operations involve recursing through the 
 list by using car and cdr. For example, since CSV stores everything in a string format, to perform operations on the 
 numbers in a data set, they must first casted to numbers and the non-number fields need to be removed. Recursion will 
 Also be used when making the plots. When plotting the plot function will recursively build a list of points to plot.
 
-We will also be using mapping, filtering, and reductions to perform various data manipulations on, such as removing a 
+We used used mapping, filtering, and reductions to perform various data manipulations on, such as removing a 
 certain column from our data. Also, we will be using higher order functions to perform operations on several elements 
-in a 2d list or array. All the statics functions will all be varying foldr functions.
+in a 2d list or array. All the statics functions use varying foldr functions. Linear regression used many higher order
+functions to for summations in the forumla or mapping equations to every elements of the lsit. 
+
+Our project had some state modifaction invloved. Linear regression used a let* to create a bunch of clousres. This
+is so I can caluate intermeditate steps of calulating linear regression. 
 
 The array library in racket supports a lot of list manipulation we did in Haskell like slicing and comprehensions. 
 The matrix library will enable us to perform standard linear algebra functions.
@@ -30,6 +34,8 @@ and the name of the column. If the symbol 'name is passed the name of the column
 Also in the plot2D function, the last argument decides if a linear regression should be plotted or not. If the symbol 'none is
 passed then it wont, otherwise it will. Although this doesn't make logical sense it was made as an intention to be expanded upon
 in the future.
+
+
 
 ### External Technologies
 
