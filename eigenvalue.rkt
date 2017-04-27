@@ -1,5 +1,5 @@
 #lang racket
-
+(require srfi/42ref)
 (require (planet wmfarr/plt-linalg:1:13/matrix))
 (require math/array)
 

@@ -5,10 +5,6 @@
 (require math/array)
 (require math/matrix)
 (require plot)
-(require db)
-
-;; db connection
-(define conn (sqlite3-connect #:database "my.db"))
 
 ;; require custom functions 
 (require "graphs.rkt")
@@ -64,15 +60,9 @@
 (define iris-co-variance-matrix
  (array/
  (matrix* (array-axis-swap (array- z mean-vector) 1 0) (array- z mean-vector))
- (array (- (vector-ref (array-shape z) 0) 1)))
-;  (array #[#[1.00671141 -0.11010327 0.87760486 0.82344326]
-;           #[-0.11010327  1.00671141 -0.42333835 -0.358937]
-;           #[0.87760486 -0.42333835  1.00671141  0.96921855]
-;           #[0.82344326 -0.358937    0.96921855  1.00671141]])
-  )
+ (array (- (vector-ref (array-shape z) 0) 1))))
            
-
-;; calculate eigenvectors and eigenvalues
+;; calculate eigenvectors and eigenvalues from the covariance matrix 
 (define iris-eigenvalues
   (array #[2.93035378  0.92740362  0.14834223  0.02074601]))
            
@@ -111,37 +101,40 @@
   (map (lambda (x y) (append-last x y)) iris-pca
        (map (lambda (x) (class x)) (remove-last iris-raw))))
 
+(define identity
+    (lambda (x)
+      x))
+
 (define pca-class
   (lambda (x)
     (if (eqv? x 'name)
          "Class"
          (car (cdr (cdr (cdr x)))))))
 
-;; placeholder for actual graph once I figure out matrix multiplication and the eigenvectors/values
-(define pca1 (query-rows
-                  conn
-                  "select pc1, pc2, pc3 from iris_pca where class = 'Iris-setosa'"))
+(define filter-3c 
+  (lambda (data parm expr [class-t "none"])
+    (if (same-class class-t "none")
+        (foldr (lambda (x y) (if (expr (string-to-number (parm x))) (cons x y) y)) '() data)
+        ;;filter then get the average
+        (foldr (lambda (x y) (if (expr (string-to-number (parm x))) (cons x y) y)) '()
+               (foldr (lambda (x y) (if (same-class (pca-class x) class-t) (cons x y) y))
+                      '() data)))))
 
-(define pca2 (query-rows
-                  conn
-                  "select pc1, pc2, pc3 from iris_pca where class = 'Iris-versicolor'"))
 
-(define pca3 (query-rows
-                  conn
-                  "select pc1, pc2, pc3 from iris_pca where class = 'Iris-virginica'"))
+(define pca1 (remove-last-col (filter-3c iris-pca-classes petal-width identity "Iris-setosa")))
+(define pca2 (remove-last-col (filter-3c iris-pca-classes petal-width identity "Iris-versicolor")))
+(define pca3 (remove-last-col (filter-3c iris-pca-classes petal-width identity "Iris-virginica")))
 
 ;; pca of iris dataset
-(plot3d (list (points3d pca1 #:sym 'dot #:size 20 #:color 1)
-              (points3d pca2 #:sym 'dot #:size 20 #:color 2)
-              (points3d pca3 #:sym 'dot #:size 20 #:color 3))
+(plot3d (list (points3d pca1 #:sym 'dot #:size 20 #:color 1 #:label "Iris-setosa")
+              (points3d pca2 #:sym 'dot #:size 20 #:color 2 #:label "Iris-versicolor")
+              (points3d pca3 #:sym 'dot #:size 20 #:color 3 #:label "Iris-virginica"))
         #:altitude 25
         #:title "3D PCA of iris dataset")
 
-(plot3d (points3d iris-pca #:sym 'dot #:size 20 #:color 1)
-        #:altitude 25
-        #:title "3D PCA of iris dataset")
-
-(disconnect conn)
+;(plot3d (points3d iris-pca #:sym 'dot #:size 20 #:color 1)
+;        #:altitude 25
+;        #:title "3D PCA of iris dataset")
 
 ;; quick test of 3d plot
 ;; (plot3d (points3d (array->list* iris-array))
@@ -164,9 +157,6 @@
     (lambda (x)
       (= x y))))
 
-(define identity
-    (lambda (x)
-      x))
 
 ;; TODO
 ;; Plot a 3d graph plot graph

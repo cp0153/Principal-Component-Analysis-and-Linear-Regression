@@ -10,7 +10,8 @@
 (provide str-to-num-lst strlst-to-numlsts)
 (provide merge-lists)
 (provide append-last)
-
+(provide string-to-number)
+(provide remove-last-col)
 ;;used for data abstractions
 
 ;;Data abstractions of iris dataset
@@ -59,6 +60,10 @@
 (define (filter-last-csv lst-of-lsts)
   (define remove-last-lst (remove-last lst-of-lsts))
   (map (lambda (x) (remove-last x)) remove-last-lst))
+
+;; similar to csv only just drops the column, no newline list at the end of a csv
+(define (remove-last-col lst-of-lsts)
+  (map (lambda (x) (remove-last x)) lst-of-lsts))
 
 ;; helper function to append the class column back onto a list after computing the clustering
 ;; takes a list and and element and appends it to the end
