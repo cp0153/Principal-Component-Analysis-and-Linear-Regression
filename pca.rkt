@@ -62,7 +62,7 @@
  (matrix* (array-axis-swap (array- z mean-vector) 1 0) (array- z mean-vector))
  (array (- (vector-ref (array-shape z) 0) 1))))
            
-;; calculate eigenvectors and eigenvalues from the covariance matrix 
+;; calculate eigenvectors and eigenvalues from the covariance matrix (this part was done with python)
 (define iris-eigenvalues
   (array #[2.93035378  0.92740362  0.14834223  0.02074601]))
            
@@ -77,20 +77,10 @@
 ;; number of dimensions for the new array
 ;; want to define a function here that takes an array and only keeps the n first number of columns
 ;; like 3x3 array and 2 will remove the last column from it
-(define (projection-matrix eigenvectors dim) 0)
-;;  (define (iter dim count)
-;;    (if (> count dim)
-;;        eigenvectors
-;;        ((map (lambda (x) (remove-last  x)) eigenvectors))))
-;; (iter dim 1))
 
 ;; take the first 2 or 3 columns from the corresponding eigenvector/value pairs 
 (define iris-projection-matrix
   (list*->array (map (lambda (x) (remove-last x)) (array->list* iris-eigenvectors)) number?))
-;  (array #[#[0.52237162 -0.37231836 -0.72101681]
-;           #[-0.26335492 -0.92555649  0.24203288]
-;           #[0.58125401 -0.02109478  0.14089226]
-;           #[0.56561105 -0.06541577  0.6338014]]))
 
 ;; plot with result of dot product
 ;; z multiplied by the projection-matrix
@@ -132,15 +122,6 @@
         #:altitude 25
         #:title "3D PCA of iris dataset")
 
-;(plot3d (points3d iris-pca #:sym 'dot #:size 20 #:color 1)
-;        #:altitude 25
-;        #:title "3D PCA of iris dataset")
-
-;; quick test of 3d plot
-;; (plot3d (points3d (array->list* iris-array))
-;;          #:altitude 25)
-
-
 ;; lambdas for filter
 (define less-than 
   (lambda (y)
@@ -156,19 +137,6 @@
   (lambda (y)
     (lambda (x)
       (= x y))))
-
-
-;; TODO
-;; Plot a 3d graph plot graph
-;; Make a linear regression
-;; make bar graphs
-;; make the graphs have better labels
-
-;; testing plot
-(define thing
-  (plot3d (list (points3d (strlst-to-numlsts iris-raw-num-str) #:sym 'dot #:size 20 #:color 1))))
-
-;; TODO
 
 
 ;; Some test data set for plotting

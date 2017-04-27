@@ -35,7 +35,7 @@ The array library in racket supports a lot of list manipulation similar to what 
 array slicing and mapping. Almost all of the array functions involved a map function.
 
 There is a bit of expression evaluation going on in our project. The selectors hold 2 parts a lambda expression that 
-will uses cars and cdrs to get a the column number that corepsonds with the name of the column and a string that is the 
+will uses cars and cdrs to get a the column number that correspond with the name of the column and a string that is the 
 actual name of the column. If the symbol 'name is passed to the procedure, the name of the column is returned, 
 Otherwise the lambda expression is returned. Also in the plot2D function, the last argument decides if a linear 
 regression should be plotted or not. If the symbol 'none is passed then it wont, otherwise it will. Although this 
@@ -68,7 +68,8 @@ For example the code casting numbers in a 2 dimensional list can be applied to a
 
 ### Evaluation of Results
 We were successful in producing a Principal Component Analysis of the iris dataset, and a linear
-regression plot. 
+regression plot. All of the calculations for the Principal Component Analysis except for the Eigenvalues and
+Eigenvectors were done in racket. I used a python script to do that calculation using the covariance matrix.
 
 ## Architecture Diagram
 
