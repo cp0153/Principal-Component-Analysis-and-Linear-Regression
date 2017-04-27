@@ -89,7 +89,6 @@ Writing code required to do initial manipulations from the raw csv data to a usa
 completing the plots
 
 ### Public Presentation (Fri Apr 28)
-additional data visualizations time permitting 
 
 ## Group Responsibilities
 
