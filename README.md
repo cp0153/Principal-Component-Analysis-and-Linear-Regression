@@ -33,8 +33,9 @@ is so I can calculate intermediate steps of calculating linear regression.
 The array library in racket supports a lot of list manipulation similar to what we did in Haskell like 
 array slicing and mapping. Almost all of the array functions involved a map function.
 
-There is a bit of expression evaluation going on in our project. The selectors hold 2 parts the lambdas to get at the data
-and the name of the column.[NEEDS MORE INFO] If the symbol 'name is passed the name of the column is returned. Otherwise the lambda is returned.
+There is a bit of expression evaluation going on in our project. The selectors hold 2 parts a lambda expersion that will uses cars and cdrs
+to get a the column number that corepsonds with the name of the column and a string that is the acutal name of the column.
+If the symbol 'name is passed to the procedure, the name of the column is returned, Otherwise the lambda expersion is returned.
 Also in the plot2D function, the last argument decides if a linear regression should be plotted or not. If the symbol 'none is
 passed then it wont, otherwise it will. Although this doesn't make logical sense it was made as an intention to be expanded upon
 in the future.
