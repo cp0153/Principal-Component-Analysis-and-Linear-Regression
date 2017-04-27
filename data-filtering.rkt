@@ -9,6 +9,7 @@
 (provide filter-last-csv)
 (provide str-to-num-lst strlst-to-numlsts)
 (provide merge-lists)
+(provide append-last)
 
 ;;used for data abstractions
 
@@ -58,6 +59,12 @@
 (define (filter-last-csv lst-of-lsts)
   (define remove-last-lst (remove-last lst-of-lsts))
   (map (lambda (x) (remove-last x)) remove-last-lst))
+
+;; helper function to append the class column back onto a list after computing the clustering
+;; takes a list and and element and appends it to the end
+(define (append-last lst elm)
+  (reverse (append (list elm) (reverse lst))))
+
 
 ;; converts a list of strings to numbers recursively 
 (define (str-to-num-lst items)

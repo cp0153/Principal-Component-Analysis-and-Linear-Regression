@@ -96,15 +96,26 @@
 
 ;; take the first 2 or 3 columns from the corresponding eigenvector/value pairs 
 (define iris-projection-matrix
-  (array #[#[0.52237162 -0.37231836 -0.72101681]
-           #[-0.26335492 -0.92555649  0.24203288]
-           #[0.58125401 -0.02109478  0.14089226]
-           #[0.56561105 -0.06541577  0.6338014]]))
+  (list*->array (map (lambda (x) (remove-last x)) (array->list* iris-eigenvectors)) number?))
+;  (array #[#[0.52237162 -0.37231836 -0.72101681]
+;           #[-0.26335492 -0.92555649  0.24203288]
+;           #[0.58125401 -0.02109478  0.14089226]
+;           #[0.56561105 -0.06541577  0.6338014]]))
 
 ;; plot with result of dot product
 ;; z multiplied by the projection-matrix
 (define iris-pca
-  (matrix* z iris-projection-matrix))
+  (array->list* (matrix* z iris-projection-matrix)))
+
+(define iris-pca-classes
+  (map (lambda (x y) (append-last x y)) iris-pca
+       (map (lambda (x) (class x)) (remove-last iris-raw))))
+
+(define pca-class
+  (lambda (x)
+    (if (eqv? x 'name)
+         "Class"
+         (car (cdr (cdr (cdr x)))))))
 
 ;; placeholder for actual graph once I figure out matrix multiplication and the eigenvectors/values
 (define pca1 (query-rows
@@ -126,7 +137,7 @@
         #:altitude 25
         #:title "3D PCA of iris dataset")
 
-(plot3d (points3d (array->list* iris-pca))
+(plot3d (points3d iris-pca #:sym 'dot #:size 20 #:color 1)
         #:altitude 25
         #:title "3D PCA of iris dataset")
 
