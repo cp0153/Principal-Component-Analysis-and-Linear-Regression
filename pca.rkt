@@ -62,13 +62,14 @@
 ;; N - 1 (149 in this case)
 
 (define iris-co-variance-matrix
-;; (array/
-;; (array* (array-axis-swap (array- z mean-vector) 1 0) (array- z mean-vector))
-;; (array (- (vector-ref (array-shape z) 0) 1))))
-  (array #[#[1.00671141 -0.11010327 0.87760486 0.82344326]
-           #[-0.11010327  1.00671141 -0.42333835 -0.358937]
-           #[0.87760486 -0.42333835  1.00671141  0.96921855]
-           #[0.82344326 -0.358937    0.96921855  1.00671141]]))
+ (array/
+ (matrix* (array-axis-swap (array- z mean-vector) 1 0) (array- z mean-vector))
+ (array (- (vector-ref (array-shape z) 0) 1)))
+;  (array #[#[1.00671141 -0.11010327 0.87760486 0.82344326]
+;           #[-0.11010327  1.00671141 -0.42333835 -0.358937]
+;           #[0.87760486 -0.42333835  1.00671141  0.96921855]
+;           #[0.82344326 -0.358937    0.96921855  1.00671141]])
+  )
            
 
 ;; calculate eigenvectors and eigenvalues
@@ -103,7 +104,8 @@
 ;; plot with result of dot product
 ;; z multiplied by the projection-matrix
 (define iris-pca
-  0)
+  (matrix* z iris-projection-matrix))
+
 ;; placeholder for actual graph once I figure out matrix multiplication and the eigenvectors/values
 (define pca1 (query-rows
                   conn
