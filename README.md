@@ -56,7 +56,7 @@ We will be using the iris dataset from UCI (https://archive.ics.uci.edu/ml).
 we made some different data visualizations, a plot of a principal component analysis like the sample image 
 below, a linear regression plot[ADD IMAGE AND INFO ON OTHER PLOTS], 
 
-![pca image](/pca.png?raw=true "pca image")
+![pca image](/pca.png?raw=true "pca image")![2d_with_linreg](/2d-polt-with-linear-reg.png?raw=true "2d_with_linreg")![statics_analysis](/statics-analysis.png?raw=true "statics_analysis")
 
 The functions we implemented are fairly general and it should be possible to apply to other datasets. 
 For example the code casting numbers in a 2 dimensional list can be applied to any list of lists. 
