@@ -126,6 +126,10 @@
         #:altitude 25
         #:title "3D PCA of iris dataset")
 
+(plot3d (points3d (array->list* iris-pca))
+        #:altitude 25
+        #:title "3D PCA of iris dataset")
+
 (disconnect conn)
 
 ;; quick test of 3d plot
