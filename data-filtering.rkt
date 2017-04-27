@@ -190,12 +190,18 @@
                (foldr (lambda (x y) (if (same-class (class x) class-t) (cons x y) y)) '() data)))))
 
 
+
+(define (string-to-number arg)
+  (if (number? arg)
+      arg
+      (string->number arg)))
+
 (define filter 
   (lambda (data parm expr [class-t "none"])
     (if (same-class class-t "none")
-        (foldr (lambda (x y) (if (expr (string->number (parm x))) (cons x y) y)) '() data)
+        (foldr (lambda (x y) (if (expr (string-to-number (parm x))) (cons x y) y)) '() data)
         ;;filter then get the average
-        (foldr (lambda (x y) (if (expr (string->number (parm x))) (cons x y) y)) '()
+        (foldr (lambda (x y) (if (expr (string-to-number (parm x))) (cons x y) y)) '()
                (foldr (lambda (x y) (if (same-class (class x) class-t) (cons x y) y)) '() data)))))
 
 
