@@ -18,27 +18,24 @@
 
 (define (plot-2D list-of-datasets col1 col2 regression)
   ;;count is used to make sure each dataset plotted has a different color
- (let ([count 0]
-       [regression-vals (make-linear-regression (merge-lists list-of-datasets) col1 col2)])
-     (define (points-creator list-of-datasets col1 col2 list-of-points)
+ (let ([regression-vals (make-linear-regression (merge-lists list-of-datasets) col1 col2)])
+     (define (points-creator list-of-datasets col1 col2 list-of-points count)
         (if (null? list-of-datasets)
             (if (eqv? regression 'none)
                 list-of-points
                 (cons (function
                        (lambda (x) (+ (* (car regression-vals) x) (car (cdr regression-vals)))))
                       list-of-points))
-            (begin
-              (set! count (+ count 1))
-              (points-creator (cdr list-of-datasets) col1 col2
-                             (cons  (points
-                                     (foldr (lambda(x y)
-                                              (cons
-                                               (vector
-                                                (string->number (col1 x))
-                                                (string->number (col2 x))) y))
-                                            '()  (car list-of-datasets))
-                                           #:label (string-append "Dataset " (number->string count))
-                                           #:color count) list-of-points)))))
+            (points-creator (cdr list-of-datasets) col1 col2
+                            (cons (points
+                                   (foldr (lambda(x y)
+                                            (cons
+                                             (vector
+                                              (string->number (col1 x))
+                                              (string->number (col2 x))) y))
+                                          '()  (car list-of-datasets))
+                                   #:label (string-append "Dataset " (number->string count))
+                                   #:color count) list-of-points) (+ count 1))))
    (plot (points-creator list-of-datasets col1 col2 '())
          #:title (string-append (col1 'name) " vs " (col2 'name))
          #:x-label (col1 'name)
@@ -73,28 +70,25 @@
 ;; col2: colmun of the data set to plot on the y-axis
 ;; col3: colmun of the data set to plot on the z-axis
 (define (plot-3D list-of-datasets col1 col2 col3)
-   (let ([count 0])
-     (define (3D-points-creator list-of-datasets col1 col2 col3 list-of-points)
-       (if (null? list-of-datasets)
-           list-of-points
-           (begin
-             (set! count (+ count 1))
-             (3D-points-creator (cdr list-of-datasets) col1 col2 col3
-                               (cons (points3d
-                                      (foldr (lambda(x y)
-                                               (cons
-                                                (list
-                                                 (string->number (col1 x))
-                                                 (string->number (col2 x))
-                                                 (string->number (col3 x))) y))
-                                              '() (car list-of-datasets))
-                                             #:label (string-append "Dataset " (number->string count))
-                                             #:color count) list-of-points)))))
-     (plot3d (3D-points-creator list-of-datasets col1 col2 col3 '())
+  (define (3D-points-creator list-of-datasets col1 col2 col3 list-of-points count)
+    (if (null? list-of-datasets)
+         list-of-points
+         (3D-points-creator (cdr list-of-datasets) col1 col2 col3
+                            (cons (points3d
+                                   (foldr (lambda(x y)
+                                            (cons
+                                             (list
+                                              (string->number (col1 x))
+                                              (string->number (col2 x))
+                                              (string->number (col3 x))) y))
+                                          '() (car list-of-datasets))
+                                   #:label (string-append "Dataset " (number->string count))
+                                   #:color count) list-of-points) (+ count 1))))
+     (plot3d (3D-points-creator list-of-datasets col1 col2 col3 '() 1)
              #:title (string-append (col1 'name) " vs " (col2 'name) " vs " (col3 'name))
              #:x-label (col1 'name)
              #:y-label (col2 'name)
-             #:z-label (col3 'name))))
+             #:z-label (col3 'name)))
 
 
 ;;(plot-statics data-set function param list-of-classes) -> plot?
@@ -104,24 +98,20 @@
 ;; list-of-classes: list of strings that are the class names to have a graph
 ;; usage (plot-statics (remove-last iris-raw) average sepal-width (list "Iris-virginica" "Iris-versicolor" "Iris-setosa"))
 (define (plot-statics data-set function param list-of-classes)
-  (let ([count 0]
-       [min -1])
-    (define (histogram-creator dataset function param list-of-classes list-of-histograms)
-      (if (null? list-of-classes)
-          list-of-histograms
-          (begin
-            (set! count (+ count 1))
-            (set! min (+ min 1))
-            (histogram-creator dataset function param (cdr list-of-classes)
-                              (cons (discrete-histogram
-                                      (list
-                                        (vector
-                                         (class (car
-                                                 (filter dataset param identity
-                                                         (car list-of-classes))))
+  (define (histogram-creator dataset function param list-of-classes list-of-histograms count min)
+    (if (null? list-of-classes)
+         list-of-histograms
+         (histogram-creator dataset function param (cdr list-of-classes)
+                            (cons (discrete-histogram
+                                   (list
+                                    (vector
+                                     (class (car
+                                             (filter dataset param identity
+                                                     (car list-of-classes))))
                                          (function dataset param (car list-of-classes))))
-                                      #:x-min min #:color count) list-of-histograms)))))
-  (plot(histogram-creator data-set function param list-of-classes '())
+                                      #:x-min min #:color count) list-of-histograms)
+         (+ count 1)(+ min 1))))
+  (plot(histogram-creator data-set function param list-of-classes '() 1 0)
    #:title (string-append (param 'name) " Comparison")
    #:x-label "Class"
-   #:y-label (param 'name))))
+   #:y-label (param 'name)))
