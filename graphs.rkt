@@ -12,7 +12,7 @@
 ;; list-of-datasets: list of datasets that are lists of lists
 ;; col1: colmun of the data set to plot on the x-axis
 ;; col2: colmun of the data set to plot on the y-axis
-;; regression: 'none make no linear regression appper on the plot all other values will
+;; regression: 'none make no linear regression appear on the plot all other values will
 
 ;;usage: (plot-2D (list Iris-virginica Iris-versicolor) petal-width petal-length 'none)
 
@@ -99,8 +99,8 @@
 
 ;;(plot-statics data-set function param list-of-classes) -> plot?
 ;; data-set: al ist of list that contains database data
-;; function: a prodecure that was defined in data-filtering (average,min,max,...)
-;; param: a prodecure that is one of that data abstractions
+;; function: a procedure that was defined in data-filtering (average,min,max,...)
+;; param: a procedure that is one of that data abstractions
 ;; list-of-classes: list of strings that are the class names to have a graph
 ;; usage (plot-statics (remove-last iris-raw) average sepal-width (list "Iris-virginica" "Iris-versicolor" "Iris-setosa"))
 (define (plot-statics data-set function param list-of-classes)
@@ -122,6 +122,6 @@
                                          (function dataset param (car list-of-classes))))
                                       #:x-min min #:color count) list-of-histograms)))))
   (plot(histogram-creator data-set function param list-of-classes '())
-   #:title (string-append (param 'name) " Comparision")
+   #:title (string-append (param 'name) " Comparison")
    #:x-label "Class"
    #:y-label (param 'name))))
