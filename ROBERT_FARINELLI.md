@@ -46,7 +46,7 @@ The following code is how data Abstraction was used to get a a column of data (i
     "Petal Width"
     (car x))))
 ```
-Part of this functions purpose is to be a wrapper for 'car' as the petal-width is the first column in the dataset the car
+Part of this functions purpose is to be a wrapper for 'car as the petal-width is the first column in the dataset the car
 acts a getter for the first column on an entry. Symbolic differentiation is also used in this function. If the symbol ```'name```
 is passed then it will return a string with the name of the column (or selector). Otherwise it will return a lambda that will
 act as the selector.
@@ -78,8 +78,8 @@ another example is shown here for petal-length (the fouth column):
                (foldr (lambda (x y) (if (same-class (class x) class-t) (cons x y) y)) '() data)))))
 ```
 
-This function uses foldr to find the min of the given column of the data set given by the 'param'
-argument which is one of the selectors mentioned in #1. if an optional argument 'class-t' is passed
+This function uses foldr to find the min of the given column of the data set given by the 'param
+argument which is one of the selectors mentioned in #1. if an optional argument 'class-t is passed
 then it will filter by out the non matching class names (the 5th parameter of the data-set as a string)
 then it will use foldr to find the min. I uses a lambda to see if the current element is smaller than
 the accumulation (base case is 9999999999). If it is smaller than that it will return the current element
@@ -109,12 +109,12 @@ many others such as max, total, count, average, and stand-dev.
    #:x-label "Class"
    #:y-label (param 'name))) ;;symboloic differenation as discribed in #1 in use
 ```
-The function uses a helper function 'histogram-creator' as a helper function to recurse through the 'list-of-histograms' that
-specify the number of 'discrete-histogram' to be created. When a single histogram is created, it uses a vector to store the
+The function uses a helper function 'histogram-creator as a helper function to recurse through the 'list-of-histograms that
+specify the number of 'discrete-histogram to be created. When a single histogram is created, it uses a vector to store the
 data to be plotted. The first part of the vector is the the name of the histogram (x-axis). To do this it uses my filter function
-to get only the entries that contain the that from the 'car' of the 'list-of-class'. Then it gets the class name from the first
-entry. For the y-axis, it uses the 'function' parameter to get the requested statistic (min, max, average...) on from the requested
-parameter on the data set passed by the 'param' to get that static on that parameter and also filtering out the class that is the
+to get only the entries that contain the that from the 'car' of the 'list-of-class. Then it gets the class name from the first
+entry. For the y-axis, it uses the 'function parameter to get the requested statistic (min, max, average...) on from the requested
+parameter on the data set passed by the 'param to get that static on that parameter and also filtering out the class that is the
 '(car list-of-classes)'.
 
 
