@@ -87,7 +87,7 @@ overwise it will return the accumulation. This is just one example of a statics 
 many others such as max, total, count, average, and stand-dev.
 
 
-## 3. Using Recursion and Mapping to create a hsitogram
+## 3. Using Recursion and Mapping to create a histogram
 
 ```lisp
 (define (plot-statics data-set function param list-of-classes)
